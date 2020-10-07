@@ -12,27 +12,36 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--        <receiver-->
+        <!--            android:name=".MusicMetaReceiver"-->
+        <!--            android:enabled="true"-->
+        <!--            android:exported="true"-->
+        <!--            android:label="@string/app_name"-->
+        <!--            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" >-->
 
-        <receiver
-            android:name="MusicMetaReceiver"
-            android:enabled="true"
-            android:exported="true">
+        <!--            <intent-filter>-->
+        <!--                <action android:name="android.service.notification.NotificationListenerService" />-->
+        <!--                <action android:name="com.spotify.music.playbackstatechanged"/>-->
+        <!--                <action android:name="com.spotify.music.metadatachanged"/>-->
+        <!--                <action android:name="com.spotify.music.queuechanged"/>-->
+        <!--                <action android:name="com.android.music.musicservicecommand"/>-->
+        <!--                <action android:name="com.android.music.metachanged"/>-->
+        <!--                <action android:name="com.android.music.playstatechanged"/>-->
+        <!--                <action android:name="com.android.music.updateprogress"/>-->
+        <!--            </intent-filter>-->
 
+        <!--        </receiver>-->
+        <service
+            android:name=".NotificationListener"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
-                <action android:name="com.spotify.music.playbackstatechanged"/>
-                <action android:name="com.spotify.music.metadatachanged"/>
-                <action android:name="com.spotify.music.queuechanged"/>
-                <action android:name="com.android.music.musicservicecommand"/>
-                <action android:name="com.android.music.metachanged"/>
-                <action android:name="com.android.music.playstatechanged"/>
-                <action android:name="com.android.music.updateprogress"/>
+                <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
-
-        </receiver>
+        </service>
     </application>
 
 </manifest>
