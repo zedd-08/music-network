@@ -1,5 +1,7 @@
 package com.zedd.musicnetwork;
 
+import static java.util.Objects.requireNonNull;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,54 +9,50 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
-
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "ZEDD_M_N";
-    TextView artistName = null;
-    TextView albumName = null;
-    TextView songTitle = null;
-    private MusicMetaReceiver nReceiver;
+
+    @Nullable private TextView artistName;
+    @Nullable private TextView albumName;
+    @Nullable private TextView songTitle;
+
+    private final MusicMetaReceiver metaReceiver = new MusicMetaReceiver();
+    private final IntentFilter spotifyFilter = new IntentFilter();
+    {
+        spotifyFilter.addAction("com.spotify.music.metadatachanged");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        artistName = (TextView) findViewById(R.id.artistName);
-        albumName = (TextView) findViewById(R.id.albumName);
-        songTitle = (TextView) findViewById(R.id.songTitle);
-
-        nReceiver = new MusicMetaReceiver();
-        IntentFilter iF = new IntentFilter();
-        // Spotify broadcasts
-        iF.addAction("com.spotify.music.metadatachanged");
-        iF.addAction("com.spotify.music.playbackstatechanged");
-        iF.addAction("com.spotify.music.queuechanged");
-        registerReceiver(nReceiver, iF);
+        artistName = findViewById(R.id.artistName);
+        albumName = findViewById(R.id.albumName);
+        songTitle = findViewById(R.id.songTitle);
     }
 
-    @Override
-    protected void onResume() {
+    @Override protected void onResume() {
         super.onResume();
+        registerReceiver(metaReceiver, spotifyFilter);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(nReceiver);
+    @Override protected void onStop() {
+        super.onStop();
+        unregisterReceiver(metaReceiver);
     }
 
-    class MusicMetaReceiver extends BroadcastReceiver {
+    private class MusicMetaReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            Log.i(TAG, "Action: " + action);
+            Log.d(TAG, "Received intent from Spotify: " + intent);
 
-            artistName.setText("👩‍🎤 " + intent.getStringExtra("artist"));
-            albumName.setText("💽 " + intent.getStringExtra("track"));
-            songTitle.setText("🎼 " + intent.getStringExtra("track"));
+            requireNonNull(artistName).setText("👩‍🎤 " + intent.getStringExtra("artist"));
+            requireNonNull(albumName).setText("💽 " + intent.getStringExtra("album"));
+            requireNonNull(songTitle).setText("🎼 " + intent.getStringExtra("track"));
         }
     }
 }
